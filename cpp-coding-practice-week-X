@@ -1,0 +1,460 @@
+//7.1.3
+#include "pch.h"
+#include <iostream>
+using namespace std;
+int main(void)
+{
+	// 二维数组定义
+	int a[3][4];  // 三行四列数组
+	// c++语言中，二维数组中元素在内存中是按行存放的
+	int a1[2][3][4];  // 可理解为，由2个二维数组组成，每个二维数组又由3个一维数组构成
+	// 多维数组元素在内存中的存放顺序： 第一维下标变化最慢，最后边下标变化最快。
+
+	// 二维数组引用
+	a[1][2];
+	a[2 - 1][2 * 2 - 1];
+	int i = 2, j = 2;
+	a[i - 1][2 * j];
+	a[1][2] = a[2][3] / 2;
+	int a2[3][4];
+	// a2[3][4] = 5; wrong assignment!
+
+	// 二维数组的初始化
+	// 1) 分行给二维数组赋初值
+	int a3[3][4] = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			cout << a3[i][j] << '\t';
+		cout << endl;
+	}
+	cout << endl;
+	// 2) 将所有数据写在一个花括号内，按数组排列的顺序对各元素赋初值
+	int a4[3][4] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			cout << a4[i][j] << '\t';
+		cout << endl;
+	}
+	cout << endl;
+	// 3) 对部分元素赋初值
+	int a5[3][4] = { {1}, {3}, {5} };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			cout << a5[i][j] << '\t';
+		cout << endl;
+	}
+	cout << endl;
+	// 4) 可以根据给定的初始化的数据，自动确定数组的 行 数
+	int a6[][4] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			cout << a6[i][j] << '\t';
+		cout << endl;
+	}
+	cout << endl;
+	int a7[][4] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			cout << a7[i][j] << '\t';
+		cout << endl;
+	}
+	cout << endl;
+	// 定义数组时只能省略行数，不能省略列数
+	// 与一维数组类似，当定义静态的多维数组或全局变量的多维数组时，系统自动地将数组的各元素的初值赋为0
+	//赋值
+	int a8[3][4];
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 4; j++)
+			a8[i][j] = a6[i][j];
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			cout << a8[i][j] << '\t';
+		cout << endl;
+	}
+	cout << endl;
+
+
+}
+
+//7.1.4
+#include"pch.h"
+#include<iostream>
+using namespace std;
+
+#define M 4
+#define N 5
+#define P 6
+
+int min_element(int a[][4], int &row, int &col)
+{
+	int i, j, min;
+	row = 0, col = 0;
+	min = a[row][col];
+	for (i = 0; i < 3; i++)
+		for(j = 0; j < 4; j++)
+			if (a[i][j] < min)
+			{
+				min = a[i][j];
+				row = i;
+				col = j;
+			}
+	return min;
+}
+
+void transpose1(int a[][4], int b[][4])
+{
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			b[j][i] = a[i][j];
+}
+
+void transpose2(int a[][4])
+{
+	for (int i = 0; i < 3; i++)
+		for (int j = i + 1; j < 4; j++) //i+1
+		{
+			int t = a[i][j];
+			a[i][j] = a[j][i];
+			a[j][i] = t;
+		}
+}
+
+void rsum(int a[][4], int row, int b[])
+{
+	for (int i = 0; i < row; i++)
+	{
+		b[i] = 0;
+		for (int j = 0; j < 4; j++)
+			b[i] += a[i][j];
+	}
+}
+
+int main(void)
+{
+	// 二维数组元素作为函数参数
+	bool equal(int, int);
+	int a[3][4] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 },
+		b[3][4] = { 12, 2, 3, 4, 10, 6, 7, 11, 9, 5, 8, 1 },
+		i, j, k = 0;
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 4; j++)
+			if (equal(a[i][j], b[i][j]) == true)
+				k++;
+	cout << "相等个数为" << k << endl;
+
+	// 二维数组名作为函数参数
+	//二维数组名作为函数参数，在被调函数中对形参数组定义时可以指定每一维的大小，也可以省略第一维的大小
+	//int max(int a[4][5])  或 int max(int a[][5] 
+	// 但是不能把第二维以及其他高维的大小声明省略 如inta a[][], int a[3][]是不合法的
+
+	// 求二维数组最小元素
+	int i15, j15, row15, col15, min15;
+	int a15[3][4];
+	cout << "输入三行四列二维数组：\n";
+	for (i15 = 0; i15 < 3; i15++)
+		for (j15 = 0; j15 < 4; j15++)
+			cin >> a15[i15][j15];
+	min15 = min_element(a15, row15, col15);
+	cout << "min=" << min15 << endl;
+	cout << "row=" << row15 << "  col=" << col15 << endl;
+
+	//转置
+	//还可直接把内外循环对调输出
+	//对此题 矩阵为方方阵 还可ij对调输出
+	int a16[4][4] = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 }, { 13, 14, 15, 16 } };
+	int b16[4][4];
+	cout << "数组a\n";
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 4; j++)
+			cout << a16[i][j] << '\t';
+		cout << endl;
+	}
+	transpose1(a16, b16);
+	cout << "数组b\n";
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 4; j++)
+			cout << b16[i][j] << '\t';
+		cout << endl;
+	}
+
+	//方阵转置
+	//a16[4][4] = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 }, { 13, 14, 15, 16 } };
+	//上面的语句不能再写a16[4][4] = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 }, { 13, 14, 15, 16 } }; 
+	//这是因为数组不能整体赋值
+	cout << "数组a\n";
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 4; j++)
+			cout << a16[i][j] << '\t';
+		cout << endl;
+	}
+	transpose2(a16);
+	cout << "数组a转置\n";
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 4; j++)
+			cout << a16[i][j] << '\t';
+		cout << endl;
+	}
+
+	//求矩阵乘积
+	void mul(int a[][N], int b[][P], int c[][P]); //此处N P P不能写成数字？？？？？
+	int a17[M][N] = { { 1, 3, 5 }, { 2, 4, 6 }, { 15, 7, 4 }, { -2, 8, 9 } },
+		b17[N][P] = { { 3, 6, 2, 1, 7 }, { 9, 1, 3, -1, 5 }, { 2, 5, 8, 1, 9 } }, c17[M][P];
+	mul(a17, b17, c17);
+	cout << "矩阵A为：" << endl;
+	for (i = 0; i < M; i++)
+	{
+		for (j = 0; j < N; j++)
+			cout << a17[i][j] << '\t';
+		cout << endl;
+	}
+	cout << "矩阵B为：" << endl;
+	for (i = 0; i < N; i++)
+	{
+		for (j = 0; j < P; j++)
+			cout << b17[i][j] << '\t';
+		cout << endl;
+	}
+	cout << "矩阵C为：" << endl;
+	for (i = 0; i < M; i++)
+	{
+		for (j = 0; j < P; j++)
+			cout << c17[i][j] << '\t';
+		cout << endl;
+	}
+
+	//计算二维数组a中各元素值之和，将和值放在一个一维数组b中。
+	int a18[][4] = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } }, b18[3];
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 4; j++)
+			cout << a18[i][j] << '\t';
+		cout << endl;
+	}
+	rsum(a, 3, b18);
+	for (i = 0; i < 3; i++)
+		cout << "第 " << i + 1 << " 行元素的和是：" << b18[i] << endl;
+
+
+
+
+	return 0;
+}
+
+bool equal(int x, int y)
+{
+	return (x == y ? true : false);
+}
+
+void mul(int a[][N], int b[][P], int c[][P])
+{
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < P; j++)
+		{
+			c[i][j] = 0; //此处c[i][j]要初始化为0， 因为形参数组c在参数列表定义，数组c元素的初始值是随机数
+			for (int k = 0; k < N; k++)
+				c[i][j] = c[i][j] + a[i][k] * b[k][j];
+		}
+}
+
+//7.2.1-7.2.5
+#include"pch.h"
+#include<iostream>
+using namespace std;
+int main(void)
+{
+	// 7.2.1 字符数组的定义
+	char c[15];
+	char c1[10];  //储存空间为10字节
+	int c2[10];   //储存空间为40字节
+
+	// 7.2.2 字符数组的初始化
+	char c3[15] = { 'I', ' ', 'a', 'm', ' ', 'a', ' ', 's', 't', 'u', 'd', 'e', 'n', 't' };  //如果写成如'am'只显示最后一个字符m
+	for (int i = 0; i < 15; i++)
+		cout << c3[i]; //注意这里不需要'\t'
+	cout << endl;
+
+	char c4[15] = { 'H', 'e', 'l', 'l', 'o' }; //其余元素由系统自动赋为空字符 \0 ， 且不会被输出
+	for (int i = 0; i < 15; i++)
+		cout << c4[i];
+	cout << endl;
+
+	//如提供的初值个数与预定的数组长度相同，定义时可以省略长度，系统自动根据初值个数确定长度
+	char c5[] = { 'I', ' ', 'a', 'm', ' ', 'a', ' ', 's', 't', 'u', 'd', 'e', 'n', 't' };
+	for (int i = 0; i < 15; i++)
+		cout << c5[i];
+	cout << endl;
+
+	//二维字符数组
+	char star[3][5] = { {' ', ' ', '*' }, { ' ', '*', ' ', '*' }, { '*', ' ', '*', ' ', '*'} };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 5; j++)
+			cout << star[i][j];
+		cout << endl;
+	}
+	cout << endl;
+
+	// 7.2.3 字符数组的使用
+	//例子见上
+
+	//7.2.4 字符串和字符串结束标志
+	char c6[10] = { "Good!" }; //将字符串储存在数组中
+	//!后面全是\0,！后面的第一个\0是系统自动加上的
+	// char c7[5] = { "Good!" }; 会报错 因为最后的\0溢出了
+
+	//将字符串储存在数组的其他方法
+	char s1[] = { "Good!" };
+	char s2[] = "Good!";
+
+	//字符数组的输入输出
+	//1） 逐个字符输入输出
+	char s3[10];
+	cout << "输入10个字符\n";
+	for (int i = 0; i < 10; i++)
+		cin >> s3[i];
+	for (int i = 0; i < 10; i++)
+		cout << s3[i];
+	cout << endl;
+
+	//2) 整个字符串输入输出
+	//对于一维字符数组的输入，在cin中只给出数组名， 输出时在cout中给出数组名即可
+	char str1[20], str2[20], str3[20];
+	cout << "输入3个字符串\n";
+	cin >> str1;
+	cin >> str2;
+	cin >> str3;
+	cout << "字符串1: " << str1 << endl;
+	cout << "字符串2: " << str2 << endl;
+	cout << "字符串3: " << str3 << endl;
+	//如果数组长度大于字符串实际长度，输出时也只是遇到\0结束
+
+	//如果一个字符数组中包含一个以上的\0，则遇到第一个\0时输出就结束
+	char s4[] = { 'a', 'b', '\0', 'c', 'd', '\0' };
+	cout << s4 << endl;
+
+	//在输入字符串时，遇到空格字符或换行符（Enter键），则认为一个字符串结束，接着的非空格字符作为下一个新的字符串开始。
+	//如要将带空格的一行字符串输入到字符数组中，则要使用函数cin.getline()。该函数第一个参数为字符数组名，第二个参数减1为允许输入的最大字符个数。
+	char str4[4] = { 'G', 'o', 'o', 'd' }, str5[80];
+	cout << "输入一行字符串：\n";
+	cin.ignore(1); //cin.getline默认以回车结束，因此要无视掉上面的\n
+	cin.getline(str5, 80);
+	cout << "str4=";
+	for (int i = 0; i < 4; i++)
+		cout << str4[i];
+	cout << endl;
+	cout << "str5=" << str5 << endl;
+	/*
+	1)当输入行中的字符个数小于80时，将实际输入的字符串（不包括换行符）全部送给str；当输入行中的字符个数大于或等于
+	80时，只取前79个字符送给字符串
+	2）如果要将字符数组中的字符作为字符串输出，必须保证数组中包含字符串结束标志\0;
+	否则只能将字符数组中的字符一个一个输出
+	上例
+	cout << str4 << endl;是错的*/
+	char str6[5] = { 'G', 'o', 'o', 'd' };
+	cout << str6 << endl;
+}
+
+//7.2.6
+#include"pch.h"
+#include<iostream>
+#include<string.h> //要调用字符串处理函数时，需要包含string.h文件
+using namespace std;
+int main(void)
+{
+	//7.2.6 字符串处理函数
+	
+	//1) 求字符串长度函数strlen(字符数组)
+	//该函数的实参可以是字符数组名，也可以是字符串。功能是求字符串长度，即字符串包含的有效字符个数
+	char s1[80] = "China";
+	cout << strlen(s1) << '\n';
+	cout << strlen("大学生") << '\n';
+
+	cout << sizeof(s1) << endl; //80 获得s1所占内存空间大小 包括\0
+	cout << sizeof("大学生") << endl; //7 获得该字符串所含内存空间大小 包括\0
+
+	char s2[] = "How do you do!";
+	char s3[] = "Hello!";
+	char s4[80];
+	cout << "input a word:\n";
+	cin >> s4;
+	cout << "s2: " << strlen(s2) << endl;
+	cout << "s3: " << strlen(s3) << endl;
+	cout << "s4: " << strlen(s4) << endl;
+
+	//2) 字符串复制函数strcp(字符数组1， 字符数组2)
+	//将字符数组2的字符串复制到字符数组1中
+	char s5[80], s6[80] = { "I am a student" };
+	strcpy_s(s5, s6); //用strcpy警告
+	cout << s5 << endl;
+	
+	//字符数组1长度必须大于等于字符数组2长度
+	//复制时连同字符串后面的'\0'一起复制到字符数组1中
+	/*不能用赋值语句将一个字符串常量或字符数组直接赋给一个字符数组
+	char str1[80], str2[80];
+	str1 = {"Good"};
+	str1 = str2;
+	错误
+	字符数组的赋值只能用strcpy函数处理！！！！！！！！！！！！！！！！
+	用一个赋值语句只能将一个字符赋给一个字符型变量或字符型数组元素*/
+	char c[5], c1, c2;
+	c1 = 'A', c2 = 'B';
+	c[0] = 'G', c[1] = 'o', c[2] = 'o', c[3] = 'd', c[4] = '\0';
+	cout << c << endl;
+
+	//3)字符串连接函数strcat（字符数组1， 字符数组2）
+	//把字符数组2中字符串连接到字符数组1字符串后面
+	char s7[20] = "one", s8[20] = "two", s9[20] = "three";
+	strcat_s(s7, s8);
+	cout << s7 << endl;//用strcat警告
+	strcat_s(s7, s9); //不用cout，这里cout显示0
+	cout << s7 << endl; 
+	//该函数中第二个参数也可以是一个字符型常量
+
+	//4)字符串比较函数strcmp
+	/*从两个字符串第一个字符开始自左至右逐个字符比较，这种比较是按字符的ascii码值的大小进行的，
+	直到出现两个不同的字符或遇到\0为止
+	如果两个字符串中的字符均相同，则两个字符串相等，函数返回值为0；
+	当两个字符串不同时，则自左向右出现的第一个不同字符的比较结果作为两个字符串的比较结果。
+	如果第一个字符串大于第二个字符串，则返回值为1.
+	如果第二个字符串小于第二个字符串，则返回值为-1.*/
+	cout << strcmp("Student", "Student") << endl;
+	cout << strcmp("student", "Student") << endl;
+	cout << strcmp("Student", "student") << endl;
+	
+	//5)大写字母变成小写字母strlwr（字符数组）
+	char s10[] = "Student";
+	_strlwr_s(s10); //用strlwr警告
+	cout << s10 << endl;
+
+	//6)小写字母变成大写字母strupr（字符数组）
+	char s11[] = "Student2";
+	_strupr_s(s11);
+	cout << s11 << endl;
+
+	//7)strncpy(字符数组1， 字符数组2， len)
+	//将字符数组2前len个字符复制到字符数组1的前len个字符空间中，len为正整数
+	//当字符数组2表示的字符串长度小于len，则将该字符串全部复制到第一个参数所指定数组中
+	char s12[80], s13[80];
+	strncpy_s(s12, "student", 4); //用strncpy警告
+	strncpy_s(s13, "teacher", 10);
+	cout << s12 << endl;
+	cout << s13 << endl;
+
+	//8)strncmp(字符数组1， 字符数组2， len)
+	//比较前len个字符
+	//第三个参数为正整数
+	//有字符串长度小于len，功能同strcmp
+	//长度都大于len，比较len个
+	cout << strncmp("English", "England", 4) << endl;
+}
